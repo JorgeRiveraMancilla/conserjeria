@@ -52,7 +52,7 @@ public final class ValidationUtils {
      * @param numeric to calculate.
      * @return the dv.
      */
-    private static String dv(final @NonNull String numeric) {
+    public static String dv(final @NonNull String numeric) {
         int m = 0;
         int s = 1;
         int t = Integer.parseInt(numeric);

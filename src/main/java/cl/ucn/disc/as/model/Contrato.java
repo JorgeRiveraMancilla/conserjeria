@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 public class Contrato extends BaseModel {
     @NotNull
+    @Getter
     private Instant fechaPago;
 
     @NotNull

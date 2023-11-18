@@ -2,17 +2,26 @@ package cl.ucn.disc.as.services;
 
 import cl.ucn.disc.as.exceptions.SistemaException;
 import cl.ucn.disc.as.model.*;
+import cl.ucn.disc.as.utils.ValidationUtils;
+import com.github.javafaker.Faker;
+import com.github.javafaker.service.FakeValuesService;
+import com.github.javafaker.service.RandomService;
 import io.ebean.Database;
 import lombok.Builder;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.PersistenceException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
+@Slf4j
 public class SistemaImpl implements Sistema {
     @NotNull
-    private Database database;
+    private final Database database;
 
     @Builder
     public SistemaImpl(@NotNull Database database) {
@@ -94,5 +103,34 @@ public class SistemaImpl implements Sistema {
     @Override
     public List<Pago> getPagos(String rut) {
         return database.find(Pago.class).findList();
+    }
+
+    @Override
+    public Optional<Persona> getPersona(String rut) {
+        return Optional.ofNullable(
+                database.find(Persona.class)
+                        .where()
+                        .eq("rut", rut)
+                        .findOne());
+    }
+
+    @Override
+    public void populate() {
+        Locale locale = new Locale("es-CL");
+        FakeValuesService fvs = new FakeValuesService(locale, new RandomService());
+        Faker faker = new Faker(locale);
+
+        for (int i = 0; i < 100; i++) {
+            String rut = fvs.bothify("########");
+            String dv = ValidationUtils.dv(rut);
+            Persona persona = Persona.builder()
+                    .rut(rut + "-" + dv)
+                    .nombre(faker.name().firstName())
+                    .apellidos(faker.name().lastName())
+                    .email(faker.internet().emailAddress())
+                    .telefono(fvs.bothify("+569########"))
+                    .build();
+            this.add(persona);
+        }
     }
 }
