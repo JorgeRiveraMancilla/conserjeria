@@ -66,29 +66,40 @@ public final class ApiRestServer {
         };
 
         return Javalin.create(config -> {
+            // json mapper configuration
             config.jsonMapper(jsonMapper);
+
+            // gzip compression
             config.compression.gzipOnly(9);
+
+            // enable logger
             config.requestLogger.http((ctx, ms) -> {
-                log.info("{} {} in {} ms.", ctx.method(), ctx.fullUrl(), ms);
+                log.info("server: {} in {} ms.", ctx.fullUrl(), ms);
             });
+
+            // enable debug logger
             config.plugins.enableDevLogging();
         });
     }
 
-    public static Javalin start(final Integer port, final RouterConfigurator routerConfigurator){
+    public static Javalin start(final Integer port, final RoutesConfigurator routesConfigurator){
         if (port < 1024 || port > 65535) {
             log.error("Bad port: {}", port);
-            throw new IllegalArgumentException("Port must be between 1024 and 65535");
+            throw new IllegalArgumentException("Bad port: " + port);
         }
-
         log.debug("Starting the server in port {} ..", port);
 
+        // the server
         Javalin app = createAndConfigureJavalin();
 
-        routerConfigurator.configure(app);
+        // configure the paths
+        routesConfigurator.configure(app);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
+        // the hookup thread
+        Runtime.getRuntime()
+                .addShutdownHook(new Thread(app::stop));
 
+        // hooks to detect the shutdown
         app.events(event -> {
             event.serverStarting(() -> {
                 log.debug("Starting the server ..");

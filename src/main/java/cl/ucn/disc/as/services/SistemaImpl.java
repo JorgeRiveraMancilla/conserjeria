@@ -123,11 +123,13 @@ public class SistemaImpl implements Sistema {
         for (int i = 0; i < 100; i++) {
             String rut = fvs.bothify("########");
             String dv = ValidationUtils.dv(rut);
+            String name = faker.name().firstName();
+            String lastName = faker.name().lastName();
             Persona persona = Persona.builder()
                     .rut(rut + "-" + dv)
-                    .nombre(faker.name().firstName())
-                    .apellidos(faker.name().lastName())
-                    .email(faker.internet().emailAddress())
+                    .nombre(name)
+                    .apellidos(lastName)
+                    .email(name.toLowerCase() + "." + lastName.toLowerCase() + fvs.bothify("###@gmail.com"))
                     .telefono(fvs.bothify("+569########"))
                     .build();
             this.add(persona);

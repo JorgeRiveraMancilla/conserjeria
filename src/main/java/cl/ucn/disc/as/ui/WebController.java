@@ -9,7 +9,7 @@ import io.javalin.http.NotFoundResponse;
 
 import java.util.Optional;
 
-public final class WebController implements RouterConfigurator {
+public final class WebController implements RoutesConfigurator {
     private final Sistema sistema;
 
     public WebController() {
@@ -19,15 +19,15 @@ public final class WebController implements RouterConfigurator {
 
     @Override
     public void configure(final Javalin app) {
-        app.get("/", ctx -> {
+        app.get("/api", ctx -> {
             ctx.result("Welcome to Conserjería API REST");
         });
 
-        app.get("/personas", ctx -> {
+        app.get("/api/personas", ctx -> {
             ctx.json(this.sistema.getPersonas());
         });
 
-        app.get("/personas/{rut}", ctx -> {
+        app.get("/api/personas/{rut}", ctx -> {
             String rut = ctx.pathParam("rut");
             Optional<Persona> persona = this.sistema.getPersona(rut);
             if (persona.isPresent()) {

@@ -32,11 +32,12 @@ ext {
     logbackVersion = '1.4.11'
     commonsLangVersion = '3.13.0'
     javaFakerVersion = '1.0.2'
+    junitVersion = '5.10.1'
 }
 
 dependencies {
     // junit
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     // lombok
