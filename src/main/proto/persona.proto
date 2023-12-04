@@ -1,0 +1,26 @@
+syntax = "proto3";
+package conserjeria;
+
+option java_package = "cl.ucn.disc.as.grpc";
+option java_multiple_files = true;
+option optimize_for = SPEED;
+
+message PersonaGrpc {
+  string rut = 1;
+  string nombre = 2;
+  string apellidos = 3;
+  string email = 4;
+  string telefono = 5;
+}
+
+message PersonaGrpcRequest {
+  string rut = 1;
+}
+
+message PersonaGrpcResponse {
+  PersonaGrpc persona = 1;
+}
+
+service PersonaGrpcService {
+  rpc retrieve(PersonaGrpcRequest) returns (PersonaGrpcResponse);
+}
