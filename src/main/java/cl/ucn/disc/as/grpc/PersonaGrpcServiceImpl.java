@@ -1,5 +1,6 @@
 package cl.ucn.disc.as.grpc;
 
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

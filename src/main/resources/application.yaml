@@ -13,9 +13,9 @@ ebean:
 # database configuration
 datasource:
   db:
-    username: conserjeria
-    password: 79z#5RX&qq5z
-    platform: sqlite # h2, postgres, mysql, oracle, sqlserver
-    ddlMode: dropCreate # none | dropCreate | migrations
-    dbName: conserjeria
-    url: jdbc:sqlite:conserjeria.db
+    username: ${DB_USERNAME:conserjeria}
+    password: ${DB_PASSWORD:79z#5RX&qq5z}
+    platform: ${DB_PLATFORM:sqlite}
+    ddlMode: ${DB_DDL_MODE:dropCreate}
+    dbName: ${DB_NAME:conserjeria}
+    url: ${DB_URL:jdbc:sqlite:conserjeria.db}

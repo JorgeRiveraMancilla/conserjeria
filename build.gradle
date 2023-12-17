@@ -1,27 +1,31 @@
 buildscript {
     ext {
-        lombokVersion = '1.18.30'
-        ebeanVersion = '13.23.1'
-        sqliteVersion = '3.43.2.1'
-        javafakerVersion = '1.0.2'
+        ebeanVersion = '13.25.1'
+        sqliteVersion = '3.44.0.0'
         javalinVersion = '5.6.3'
-        junitVersion = '5.10.0'
-        loggerVersion = '1.4.11'
-        commonsVersion = '3.13.0'
+
+        lombokVersion = '1.18.30'
         gsonVersion = '2.10.1'
+        logbackVersion = '1.4.11'
+        commonsLangVersion = '3.14.0'
+        javaFakerVersion = '1.0.2'
+
         grpcVersion = '1.59.0'
         protobufVersion = '3.21.12'
+
         protobufPluginVersion = '0.9.4'
         versionPluginVersion = '0.50.0'
+
     }
 }
 
 plugins {
     id 'idea'
     id 'java'
-    id('io.ebean') version '13.23.1'
-    id('com.github.ben-manes.versions') version '0.49.0'
-    id('com.google.protobuf') version '0.9.4'
+    id('io.ebean') version "${ebeanVersion}"
+    id('com.github.ben-manes.versions') version "${versionPluginVersion}"
+    id('com.google.protobuf') version "${protobufPluginVersion}"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group = 'cl.ucn.disc.as'
@@ -32,7 +36,7 @@ repositories {
     mavenCentral()
 }
 
-protobuf{
+protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
@@ -45,7 +49,7 @@ protobuf{
         }
     }
     generateProtoTasks {
-        all()*.plugins {
+        all()*.plugins{
             grpc {}
         }
     }
@@ -63,16 +67,18 @@ compileJava {
 }
 
 dependencies {
+    implementation 'mysql:mysql-connector-java:8.0.27'
     // junit
-    testImplementation platform("org.junit:junit-bom:${junitVersion}")
+    testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     // lombok
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     // ebean
     testImplementation "io.ebean:ebean-test:${ebeanVersion}"
+    implementation "io.ebean:ebean-sqlite:${ebeanVersion}"
 
     // ebean
     implementation "io.ebean:ebean:${ebeanVersion}"
@@ -81,6 +87,7 @@ dependencies {
 
     // database
     implementation "org.xerial:sqlite-jdbc:${sqliteVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:3.3.0"
     // implementation 'com.h2database:h2:2.2.220'
 
     // json
@@ -88,26 +95,30 @@ dependencies {
 
     // web: javalin
     implementation "io.javalin:javalin:${javalinVersion}"
-
-    // faker
-    implementation "com.github.javafaker:javafaker:${javafakerVersion}"
+    //implementation "com.aayushatharva.brotli4j:brorli4j:1.13.0"
+    //implementation "com.nixxcode.jvmbrotli:jvmbrotli:0.2.0"
 
     // lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     // logger
-    implementation "ch.qos.logback:logback-core:${loggerVersion}"
-    implementation "ch.qos.logback:logback-classic:${loggerVersion}"
+    implementation "ch.qos.logback:logback-core:${logbackVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
 
-    // commons-lang3
-    implementation "org.apache.commons:commons-lang3:${commonsVersion}"
+    //commons-long3
+    //https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
-    // gRPC
+    //data faker
+    implementation "com.github.javafaker:javafaker:${javaFakerVersion}"
+
+    //grpc
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "javax.annotation:javax.annotation-api:1.3.2"
+
 }
 
 ebean {
@@ -122,7 +133,21 @@ test {
 
 idea {
     module {
-        sourceDirs += file('src/generated/main/java')
-        sourceDirs += file('src/generated/main/grpc')
+        sourceDirs += file("src/generated/main/java")
+        sourceDirs += file("src/generated/main/grpc")
+    }
+}
+jar {
+    manifest {
+        attributes('Main-Class': 'Main')
+    }
+}
+shadowJar {
+    archiveClassifier.set('')
+    manifest {
+        attributes('Main-Class': 'Main')
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.grpc.LoadBalancerProvider'
     }
 }

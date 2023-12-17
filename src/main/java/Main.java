@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Slf4j
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, IOException {
         log.debug("Starting Main with library path: {}.", System.getProperty("java.library.path"));
 
         // Start the API Rest server
